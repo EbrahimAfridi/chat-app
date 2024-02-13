@@ -11,17 +11,21 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    // origin: "http://localhost:5173",
-    origin: "*",
+    origin: "http://localhost:5173",
+    // origin: "*",
     methods: ["GET", "POST"],
   },
 });
 
+// Second step: listen for the connection event for incoming sockets
 io.on("connection", (socket) => {
   console.log(`a user connected: ${socket.id}`);
+
+  // Third step: listen for the chat message event and broadcast it to all sockets
   socket.on("send_message", (msg) => {
-    console.log(msg);
+    socket.broadcast.emit("receive_message", msg);
   });
+
 })
 
 server.listen(3001, () => {
